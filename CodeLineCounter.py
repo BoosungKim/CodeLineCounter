@@ -13,7 +13,7 @@ def count_lines_in_file(path, filename):
 
     return valid_code_line
 
-counted_extensions = ["cpp", "h"]
+gonna_counted_extensions = ["cpp", "h"]
 
 
 def scan_dir(path):
@@ -24,24 +24,25 @@ def scan_dir(path):
 
     # extensions_in_files = set(map(lambda x: x.name.split('.')[-1], files))
 
-    # file 은 line count 바로 하자
-    for file in files:
-        filename = file.name
-        extension = filename.split('.')[-1]
-        if extension in counted_extensions:
-            ret_code_line += count_lines_in_file(path, filename)
+    # Calculate # of file lines
+    for each_file in files:
+        extension = each_file.name.split('.')[-1]
+        if extension in gonna_counted_extensions:
+            ret_code_line += count_lines_in_file(path, each_file.name)
             # print(filename + " : %d" % count_lines_in_file(path, filename))
 
-    # directory 는 recursive 하게 계산 하자
-    for dir in dirs:
-        # todo :
-        pass
-    pass
+    # Recursively calculate each directory
+    for each_dir in dirs:
+        next_path_name = path + '\\' + each_dir.name
+        ret_code_line += scan_dir(next_path_name)
+
+    return ret_code_line
 
 
+if __name__ == '__main__':
+    sample_path = r"C:\Users\kbs0214\Desktop\새 폴더"
+    # sample_filename = r"CAE_mesh.cpp"
+    # print(count_lines_in_file(sample_path, sample_filename))
+    print(scan_dir(sample_path))
 
-sample_path = r"D:\MIDAS\CAED trunk\src\CAED_db"
-sample_filename = r"CAE_mesh.cpp"
 
-# print(count_lines_in_file(sample_path, sample_filename))
-print(scan_dir(sample_path))
