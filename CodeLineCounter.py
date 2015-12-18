@@ -1,4 +1,8 @@
 import os
+import time
+import locale
+
+gonna_counted_extensions = ["cpp", "h", "hpp", "c", "rc", "rc2"]
 
 
 def count_lines_in_file(path, filename):
@@ -7,16 +11,19 @@ def count_lines_in_file(path, filename):
     file_url = path + '\\' + filename
     input_file = open(file_url, mode="r")
 
-    for line in input_file.readlines():
-        if len(line) > 1:
-            valid_code_line += 1
+    try:
+        for line in input_file.readlines():
+            if len(line) > 1:
+                valid_code_line += 1
+    except UnicodeDecodeError as e:
+        print(e)
+
+
 
     return valid_code_line
 
-gonna_counted_extensions = ["cpp", "h"]
 
-
-def scan_dir(path):
+def scan_dir_for_count_loc(path):
     ret_code_line = 0
 
     dirs = [x for x in os.scandir(path) if x.is_dir()]
@@ -34,15 +41,19 @@ def scan_dir(path):
     # Recursively calculate each directory
     for each_dir in dirs:
         next_path_name = path + '\\' + each_dir.name
-        ret_code_line += scan_dir(next_path_name)
+        ret_code_line += scan_dir_for_count_loc(next_path_name)
 
     return ret_code_line
 
 
 if __name__ == '__main__':
-    sample_path = r"C:\Users\kbs0214\Desktop\새 폴더"
+    start_time = time.time()
+
+    sample_path = r"D:\MIDAS\CAED trunk"
     # sample_filename = r"CAE_mesh.cpp"
     # print(count_lines_in_file(sample_path, sample_filename))
-    print(scan_dir(sample_path))
+    total_loc = scan_dir_for_count_loc(sample_path)
 
+    print(locale.format("%d", total_loc, grouping=True))
+    print("Elapsed time : %.2f" % (time.time() - start_time))
 
